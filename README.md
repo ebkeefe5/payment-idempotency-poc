@@ -15,7 +15,7 @@ User double-clicks checkout -> don't double-charge Stripe.
 - If key exists and status=SUCCESS -> return `200` + cached `response_json`
 - Else call Lambda, save result, return 200
 
-**Python Lambda (AWS):**
+**Spring Boot Payment API**
 - Recieves amount + idempotency_key
 - Calls
 - `stripe.PaymentIntent.create(..., idempotency_key=key)
