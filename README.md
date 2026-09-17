@@ -13,7 +13,7 @@ User double-clicks checkout -> don't double-charge Stripe.
 - On request: `INSERT  ... status=PENDING ON CONFLICT DO NOTHING`
 - If key exists and status=PENDING -> return `409 Conflict` (already processing)
 - If key exists and status=SUCCESS -> return `200` + cached `response_json`
-- Else call Lambda, save result, return 200
+- Else call Stripe (test), save result, return 200
 
 **Spring Boot Payment API**
 - Recieves amount + idempotency_key
