@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: payments_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: payments_db
+      POSTGRES_USER: payments_user
+      POSTGRES_PASSWORD: payments_pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
