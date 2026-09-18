@@ -8,8 +8,11 @@ import java.util.UUID;
 @Entity
 @Table(name = "payments")
 public class Payment {
-    @Id
-    private UUID id = UUID.randomUUID();
+    @PrePersist
+    void prePersist() {
+        if (id == null) id = UUID.randomUUID();
+        createdAt = Instant.now();
+    }
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -22,9 +25,8 @@ public class Payment {
 
     private String stripePaymentId;
 
-    @Column(nullable = false, updatable = false)
-    private Instant createdAt = Instant.now();
-
+    public Payment() {}
+    
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     public BigDecimal getAmount() { return amount; }
