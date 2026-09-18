@@ -1,5 +1,10 @@
 package com.payments.repository;
+
 import com.payments.model.IdempotencyRecord;
+import com.payments.model.IdempotencyRecord;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface IdempotencyRepository extends JpaRepository<IdempotencyRecord, String> {}
+public interface IdempotencyRepository extends JpaRepository<IdempotencyRecord, String> {
+    Optional<IdempotencyRecord> findByIdempotencyKey(String idempotencyKey);
+}

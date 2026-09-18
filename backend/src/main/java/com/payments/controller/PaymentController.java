@@ -19,7 +19,6 @@ public class PaymentController {
 
     @PostMapping("/payments")
     public ResponseEntity<Payment> pay(@RequestHeader("Idempotency-Key") String key, @RequestBody PaymentRequest request) {
-        Payment payment = paymentService.process(key, request.amount());
-        return ResponseEntity.ok(payment);
+        return paymentService.process(key, request.amount());
     }
 }

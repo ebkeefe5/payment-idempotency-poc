@@ -1,42 +1,44 @@
 package com.payments.model;
 
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "idempotency_records")
 public class IdempotencyRecord {
     
-    @Id 
-    @Column(name = "idempotency_key")
-    private String idempotency_key;
+    @Id
+    @Column(name = "idempotency_key", unique = true, nullable = false) 
+    private String idempotencyKey;
 
-    @Column(name = "payment_id")
-    private UUID paymentId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
     @Column(columnDefinition = "TEXT")
     private String response;
 
     @Column(name = "created_at")
-    private OffsetDateTime createdAt;
+    private Instant createdAt = Instant.now();
+
+    public enum Status { PENDING, SUCCESS }
 
     public IdempotencyRecord() {}
-
-    public IdempotencyRecord(String idempotency_key, UUID paymentId, String response) {
-        this.idempotency_key = idempotency_key;
-        this.paymentId = paymentId;
+    public IdempotencyRecord(String key, Status status) {
+        this.idempotencyKey = key;
+        this.status = status;
+    }
+    public IdempotencyRecord(String key, Status status, String response) {
+        this.idempotencyKey = key;
+        this.status = status;
         this.response = response;
-        this.createdAt = OffsetDateTime.now();
     }
     
-    public String getIdempotencyKey() { return idempotency_key; }
-    public void setIdempotencyKey(String idempotency_key) { this.idempotency_key = idempotency_key; }
-    public UUID getPaymentId() { return paymentId; }
-    public void setPaymentId(UUID paymentId) { this.paymentId = paymentId; }
+    public String getIdempotencyKey() { return idempotencyKey; }
     public String getResponse() { return response; }
     public void setResponse(String response) { this.response = response; }
-    public OffsetDateTime getCreatedAt() { return createdAt; } 
-    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
     
 }
