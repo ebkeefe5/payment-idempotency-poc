@@ -8,6 +8,10 @@ import java.util.UUID;
 @Entity
 @Table(name = "payments")
 public class Payment {
+    @Id 
+    private UUID id;
+    private Instant createdAt;
+    
     @PrePersist
     void prePersist() {
         if (id == null) id = UUID.randomUUID();
@@ -28,7 +32,6 @@ public class Payment {
     public Payment() {}
     
     public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) {this.amount = amount; }
     public String getCurrency() { return currency; }
