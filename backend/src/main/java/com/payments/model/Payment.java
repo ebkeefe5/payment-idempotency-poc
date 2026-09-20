@@ -30,6 +30,7 @@ public class Payment {
 
     public enum PaymentStatus { PENDING, COMPLETED, FAILED }
 
+    @Column(name = "gateway_id")
     private String gatewayId; //ie stripe gatewayId
 
     public Payment() {}
@@ -42,6 +43,6 @@ public class Payment {
     public PaymentStatus getStatus() { return status; }
     public void setStatus(PaymentStatus status) { this.status = status; }
     public String getGatewayId() { return gatewayId; }
-    public void setGatewayId(String stripePaymentId) { this.gatewayId = gatewayId; }
+    public void setGatewayId(String gatewayId) { this.gatewayId = gatewayId; }
     public Instant getCreatedAt() { return createdAt; }
 }
