@@ -16,8 +16,8 @@ public class IdempotencyRecord {
     @Column(nullable = false)
     private Status status;
 
-    @Column(columnDefinition = "TEXT")
-    private String response;
+    @Column(name = "payment_id")
+    private UUID paymentId;
 
     @Column(name = "created_at")
     private Instant createdAt = Instant.now();
@@ -29,15 +29,15 @@ public class IdempotencyRecord {
         this.idempotencyKey = key;
         this.status = status;
     }
-    public IdempotencyRecord(String key, Status status, String response) {
+    public IdempotencyRecord(String key, Status status, UUID paymentId) {
         this.idempotencyKey = key;
         this.status = status;
-        this.response = response;
+        this.paymentId = paymentId;
     }
     
     public String getIdempotencyKey() { return idempotencyKey; }
-    public String getResponse() { return response; }
-    public void setResponse(String response) { this.response = response; }
+    public UUID getPaymentId() { return paymentId; }
+    public void setPaymentId(UUID paymentId) { this.paymentId = paymentId; }
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
     

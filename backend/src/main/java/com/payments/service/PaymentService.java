@@ -34,9 +34,13 @@ public class PaymentService {
         if (existingOpt.isPresent()) {
             var existing = existingOpt.get();
             if (existing.getStatus() == IdempotencyRecord.Status.PENDING) {
-                return ResponseEntity.status(409).body("{\"error\":\"already processing\"}"); 
+                return ResponseEntity.status(409).body(Map.of("error", "already processing")); 
             } else {
-                return ResponseEntity.ok(existing.getResponse());
+                var payment = paymentRepo.findById(existing.getPaymentId()).orElseThrow();
+                return ResponseEntity.status(200).body(Map.of("id", payment.getId(), 
+                    "status", payment.getStatus().toString(),
+                    "amount", payment.getAmount()
+                ));
             }
         }
 
@@ -49,9 +53,13 @@ public class PaymentService {
             if (existingOpt2.isPresent()) {
                 var existing2 = existingOpt2.get();
                 if (existing2.getStatus() == IdempotencyRecord.Status.PENDING) {
-                    return ResponseEntity.status(409).body("{\"error\":\"already processing\"}"); 
+                    return ResponseEntity.status(409).body(Map.of("error", "already processing")); 
                 } else {
-                    return ResponseEntity.ok(existing2.getResponse());
+                    var payment = paymentRepo.findById(existing2.getPaymentId()).orElseThrow();
+                    return ResponseEntity.status(200).body(Map.of("id", payment.getId(), 
+                        "status", payment.getStatus().toString(),
+                        "amount", payment.getAmount()
+                    ));
                 }
             }
         }
@@ -71,11 +79,13 @@ public class PaymentService {
             String jsonResponse = "{\"id\":\""+ payment.getId() + "\"}";
 
             var record = idemRepo.findById(key).get();
-            record.setResponse(jsonResponse);
+            record.setPaymentId(payment.getId());
             record.setStatus(IdempotencyRecord.Status.SUCCESS);
             idemRepo.save(record);
-
-            return ResponseEntity.status(201).body(jsonResponse);
+            return ResponseEntity.status(201).body(Map.of("id", payment.getId(), 
+                "status", payment.getStatus().toString(),
+                "amount", payment.getAmount()
+            ));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return fail(key, payment);
@@ -85,16 +95,16 @@ public class PaymentService {
         
     }
 
-    private ResponseEntity<String> fail(String key, Payment payment) {
+    private ResponseEntity fail(String key, Payment payment) {
         payment.setStatus(Payment.PaymentStatus.FAILED);
         paymentRepo.save(payment);
 
         var record = idemRepo.findById(key).get();
         record.setStatus(IdempotencyRecord.Status.FAILED);
-        record.setResponse("{\"error\":\"gateway failed\"}");
+        record.setPaymentId(payment.getId());
         idemRepo.save(record);
         
-        return ResponseEntity.status(502).body("{\"error\":\"gateway failed\"}");
+        return ResponseEntity.status(502).body(Map.of("error", "gateway failed"));
     }
 
 }
