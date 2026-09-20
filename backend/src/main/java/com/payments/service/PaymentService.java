@@ -78,19 +78,23 @@ public class PaymentService {
             return ResponseEntity.status(201).body(jsonResponse);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            return fail(key, payment);
         } catch (Exception e) {
-            payment.setStatus(Payment.PaymentStatus.FAILED);
-            paymentRepo.save(payment);
-
-            var record = idemRepo.findById(key).get();
-            record.setStatus(IdempotencyRecord.Status.FAILED);
-            record.setResponse("{\"error\":\"gateway failed\"}");
-            idemRepo.save(record);
-            
-            return ResponseEntity.status(502).body(Map.of("error", "gateway failed"));
+            return fail(key, payment);
         }
         
+    }
+
+    private ResponseEntity<String> fail(String key, Payment payment) {
+        payment.setStatus(Payment.PaymentStatus.FAILED);
+        paymentRepo.save(payment);
+
+        var record = idemRepo.findById(key).get();
+        record.setStatus(IdempotencyRecord.Status.FAILED);
+        record.setResponse("{\"error\":\"gateway failed\"}");
+        idemRepo.save(record);
+        
+        return ResponseEntity.status(502).body("{\"error\":\"gateway failed\"}");
     }
 
 }
