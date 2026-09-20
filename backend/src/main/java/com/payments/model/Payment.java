@@ -11,6 +11,9 @@ public class Payment {
     @Id 
     private UUID id;
     private Instant createdAt;
+
+    @Column(nullable = false)
+    private BigDecimal amount;
     
     @PrePersist
     void prePersist() {
@@ -18,16 +21,16 @@ public class Payment {
         createdAt = Instant.now();
     }
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BigDecimal amount;
+    private PaymentStatus status = PaymentStatus.PENDING;
 
     @Column(nullable = false)
     private String currency = "USD";
 
-    @Column(nullable = false)
-    private String status = "PENDING";
+    public enum PaymentStatus { PENDING, COMPLETED, FAILED }
 
-    private String stripePaymentId;
+    private String gatewayId; //ie stripe gatewayId
 
     public Payment() {}
     
@@ -36,9 +39,9 @@ public class Payment {
     public void setAmount(BigDecimal amount) {this.amount = amount; }
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    public String getStripePaymentId() { return stripePaymentId; }
-    public void setStripePaymentId(String stripePaymentId) { this.stripePaymentId = stripePaymentId; }
+    public PaymentStatus getStatus() { return status; }
+    public void setStatus(PaymentStatus status) { this.status = status; }
+    public String getGatewayId() { return gatewayId; }
+    public void setGatewayId(String stripePaymentId) { this.gatewayId = gatewayId; }
     public Instant getCreatedAt() { return createdAt; }
 }

@@ -22,7 +22,7 @@ public class IdempotencyRecord {
     @Column(name = "created_at")
     private Instant createdAt = Instant.now();
 
-    public enum Status { PENDING, SUCCESS }
+    public enum Status { PENDING, SUCCESS, FAILED }
 
     public IdempotencyRecord() {}
     public IdempotencyRecord(String key, Status status) {
