@@ -5,6 +5,7 @@ import com.payments.model.Payment;
 import com.payments.service.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -16,9 +17,9 @@ public class PaymentController {
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
-
+    
     @PostMapping("/payments")
-    public ResponseEntity<Payment> pay(@RequestHeader("Idempotency-Key") String key, @RequestBody PaymentRequest request) {
+    public ResponseEntity<Payment> pay(@RequestHeader("Idempotency-Key") String key, @Valid @RequestBody PaymentRequest request) {
         return paymentService.process(key, request.amount());
     }
 }

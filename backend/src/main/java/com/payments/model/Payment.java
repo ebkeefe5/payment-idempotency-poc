@@ -1,6 +1,7 @@
 package com.payments.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
@@ -13,6 +14,7 @@ public class Payment {
     private Instant createdAt;
 
     @Column(nullable = false)
+    @Positive
     private BigDecimal amount;
     
     @PrePersist

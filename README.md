@@ -23,7 +23,11 @@ User double-clicks checkout -> don't double-charge Stripe.
 - Cron job checks idempotency_keys table; if status=PENDING > 5min, mark FAILED or re-check gateway by gatewayId. In prod, lookup by idemptoency_key in Stripe.
 
 ### How to run
+**Option 1: Full Docker (production-like)**
 - `docker-compose up -d --build`, `cd frontend && npm run dev`
+
+**Option 2: Local dev (faster for coding)**
+- `docker-compose up -d postgres`, `./gradlew bootRun`
 
 ### Why 409 vs 200?
 PENDING = 409 tells client to wait/poll. Completed = 200 derived from payment_id prevents second Stripe charge. 
