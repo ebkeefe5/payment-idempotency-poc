@@ -5,9 +5,9 @@ spring:
   application:
     name: backend
   datasource:
-    url: jdbc:postgresql://localhost:5432/payments_db
-    username: payments_user
-    password: payments_pass
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/payments_db}
+    username: ${SPRING_DATASOURCE_USERNAME:payments_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:payments_pass}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

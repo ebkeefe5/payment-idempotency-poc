@@ -10,5 +10,18 @@ services:
       POSTGRES_PASSWORD: payments_pass
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: ./backend
+    container_name: payments_api
+    ports: 
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payments_db
+      SPRING_DATASOURCE_USERNAME: payments_user
+      SPRING_DATASOURCE_PASSWORD: payments_pass
+
 volumes:
   pgdata:
