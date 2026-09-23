@@ -3,20 +3,24 @@ provider "aws" {
 }
 
 # --- ECR for backend ---
+# Private registry to store the backend Docker images
+# Github Actions will build + push here
 resource "aws_ecr_repository" "app" {
     name = "poc-app"
 }
 
 # --- VPC ---
+# Isolated network for all resources. /16 = ~65k IPs
 resource "aws_vpc" "main" {
     cidr_block = "10.0.0.0/16"
 }
 
 # --- RDS Postgres on 5432 ---
+# The payment DB. Not public = only ECS can talk to it inside VPC
 resource "aws_db_instance" "db" {
     allocated_storage = 20
     engine = "postgres"
-    instance_class = "db.t3.micro"
+    instance_class = "db.t3.micro" # cheapest for POC
     db_name = "payments_db"
     username = "payments_user"
     password = var.db_password 
@@ -25,10 +29,14 @@ resource "aws_db_instance" "db" {
 }
 
 # --- ECS ---
+# Cluster = parking lot / grouping where our container will run
+# Empty for now, no cost until we add a service
 resource "aws_ecs_cluster" "main" {
     name = "poc-cluster"
 }
 
+# --- IAM for ECS ---
+# Lets ECS pull image from ECR and write logs
 resource "aws_iam_role" "ecs_exec" {
   name = "poc-ecs-exec"
   assume_role_policy = jsonencode({
@@ -43,7 +51,10 @@ resource "aws_iam_role_policy_attachment" "ecs_exec" {
     policy_arn = "arn:aws:iam:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_ecs_task_definition" "app" { #AWS definition of compose file
+# --- ECS Task Definition ---
+# AWS definition of compose file: how to run our app container
+# Points to ECR image, sets CPU/memory, port 8080, and DB env vars
+resource "aws_ecs_task_definition" "app" { 
     family = "poc-task"
     network_mode = "awsvpc"
     requires_compatibilities = ["FARGATE"]
